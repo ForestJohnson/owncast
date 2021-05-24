@@ -1,9 +1,9 @@
-FROM golang:alpine AS build
-RUN apk add --no-cache gcc build-base linux-headers
+FROM golang:1.16.4-buster AS build
+RUN apt-get update && apt-get install -y crossbuild-essential-armhf
 
 WORKDIR /build
 COPY . /build
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o owncast .
+RUN CGO_ENABLED=1 CC=arm-linux-gnueabihf-gcc GOARCH=arm GOOS=linux go build -a -tags osusergo,netgo,sqlite_omit_load_extension -installsuffix cgo -ldflags '-extldflags "-static"' -o owncast .
 
 
 FROM alpine
