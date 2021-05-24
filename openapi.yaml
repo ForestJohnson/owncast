@@ -634,6 +634,9 @@ paths:
                   rtmpServerPort:
                     type: integer
                     description: The port the inbound RTMP broadcast should be sent to.
+                  directhlsinputurl:
+                    type: string
+                    description: An experimental optional alternative input type to use with OBS (all video encoding done on streaming PC, owncast server just serves files and thats it)
                   s3:
                     $ref: "#/components/schemas/S3"
                   videoSettings:

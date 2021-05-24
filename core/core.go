@@ -10,6 +10,7 @@ import (
 	"github.com/owncast/owncast/config"
 	"github.com/owncast/owncast/core/chat"
 	"github.com/owncast/owncast/core/data"
+	"github.com/owncast/owncast/core/directhls"
 	"github.com/owncast/owncast/core/rtmp"
 	"github.com/owncast/owncast/core/transcoder"
 	"github.com/owncast/owncast/models"
@@ -66,11 +67,15 @@ func Start() error {
 
 	chat.Setup(ChatListenerImpl{})
 
-	// start the rtmp server
-	go rtmp.Start(setStreamAsConnected, setBroadcaster)
+	if data.GetDirectHLSInputURL() != "" {
+		go directhls.Start(setStreamAsConnected, setBroadcaster)
 
-	rtmpPort := data.GetRTMPPortNumber()
-	log.Infof("RTMP is accepting inbound streams on port %d.", rtmpPort)
+		log.Infof("Polling for HLS segments at %s.", data.GetDirectHLSInputURL())
+	} else {
+		go rtmp.Start(setStreamAsConnected, setBroadcaster)
+
+		log.Infof("RTMP is accepting inbound streams on port %d.", data.GetRTMPPortNumber())
+	}
 
 	return nil
 }

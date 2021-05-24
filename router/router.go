@@ -175,6 +175,9 @@ func Start() error {
 	// Server rtmp port
 	http.HandleFunc("/api/admin/config/rtmpserverport", middleware.RequireAdminAuth(admin.SetRTMPServerPort))
 
+	// Server direct hls input url
+	http.HandleFunc("/api/admin/config/directhlsinputurl", middleware.RequireAdminAuth(admin.SetDirectHLSInputURL))
+
 	// Is server marked as NSFW
 	http.HandleFunc("/api/admin/config/nsfw", middleware.RequireAdminAuth(admin.SetNSFW))
 

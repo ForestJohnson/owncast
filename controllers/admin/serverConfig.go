@@ -43,11 +43,12 @@ func GetServerConfig(w http.ResponseWriter, r *http.Request) {
 			NSFW:             data.GetNSFW(),
 			CustomStyles:     data.GetCustomStyles(),
 		},
-		FFmpegPath:     ffmpeg,
-		StreamKey:      data.GetStreamKey(),
-		WebServerPort:  config.WebServerPort,
-		RTMPServerPort: data.GetRTMPPortNumber(),
-		ChatDisabled:   data.GetChatDisabled(),
+		FFmpegPath:        ffmpeg,
+		StreamKey:         data.GetStreamKey(),
+		WebServerPort:     config.WebServerPort,
+		RTMPServerPort:    data.GetRTMPPortNumber(),
+		DirectHLSInputURL: data.GetDirectHLSInputURL(),
+		ChatDisabled:      data.GetChatDisabled(),
 		VideoSettings: videoSettings{
 			VideoQualityVariants: videoQualityVariants,
 			LatencyLevel:         data.GetStreamLatencyLevel().Level,
@@ -76,6 +77,7 @@ type serverConfigAdminResponse struct {
 	StreamKey         string                  `json:"streamKey"`
 	WebServerPort     int                     `json:"webServerPort"`
 	RTMPServerPort    int                     `json:"rtmpServerPort"`
+	DirectHLSInputURL string                  `json:"directHLSInputURL"`
 	S3                models.S3               `json:"s3"`
 	VideoSettings     videoSettings           `json:"videoSettings"`
 	LatencyLevel      int                     `json:"latencyLevel"`

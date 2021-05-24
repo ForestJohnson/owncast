@@ -23,6 +23,7 @@ const serverNameKey = "server_name"
 const serverURLKey = "server_url"
 const httpPortNumberKey = "http_port_number"
 const rtmpPortNumberKey = "rtmp_port_number"
+const directHLSInputURLKey = "direct_hls_input_url"
 const serverMetadataTagsKey = "server_metadata_tags"
 const directoryEnabledKey = "directory_enabled"
 const directoryRegistrationKeyKey = "directory_registration_key"
@@ -209,6 +210,22 @@ func GetRTMPPortNumber() int {
 // SetRTMPPortNumber will set the server RTMP port.
 func SetRTMPPortNumber(port float64) error {
 	return _datastore.SetNumber(rtmpPortNumberKey, port)
+}
+
+// GetDirectHLSInputURL will return the server RTMP port.
+func GetDirectHLSInputURL() string {
+	url, err := _datastore.GetString(directHLSInputURLKey)
+	if err != nil {
+		log.Traceln(directHLSInputURLKey, err)
+		return config.GetDefaults().DirectHLSInputURL
+	}
+
+	return url
+}
+
+// SetDirectHLSInputURL will set the server RTMP port.
+func SetDirectHLSInputURL(url string) error {
+	return _datastore.SetString(directHLSInputURLKey, url)
 }
 
 // GetServerMetadataTags will return the metadata tags.

@@ -12,10 +12,11 @@ type Defaults struct {
 	Tags                 []string
 	PageBodyContent      string
 
-	DatabaseFilePath string
-	WebServerPort    int
-	RTMPServerPort   int
-	StreamKey        string
+	DatabaseFilePath  string
+	WebServerPort     int
+	RTMPServerPort    int
+	DirectHLSInputURL string
+	StreamKey         string
 
 	YPEnabled bool
 	YPServer  string
@@ -45,9 +46,10 @@ func GetDefaults() Defaults {
 		YPEnabled: false,
 		YPServer:  "https://directory.owncast.online",
 
-		WebServerPort:  8080,
-		RTMPServerPort: 1935,
-		StreamKey:      "abc123",
+		WebServerPort:     8080,
+		RTMPServerPort:    1935,
+		DirectHLSInputURL: "",
+		StreamKey:         "abc123",
 
 		StreamVariants: []models.StreamOutputVariant{
 			{

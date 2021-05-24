@@ -16,6 +16,7 @@
         "nolint",
         "preact",
         "rtmpserverport",
+        "directhlsinputurl",
         "sqlite",
         "videojs"
     ]

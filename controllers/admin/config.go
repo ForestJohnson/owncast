@@ -320,6 +320,25 @@ func SetRTMPServerPort(w http.ResponseWriter, r *http.Request) {
 	controllers.WriteSimpleResponse(w, true, "rtmp port set")
 }
 
+// SetDirectHLSInputURL will handle the web config request to set the inbound RTMP port.
+func SetDirectHLSInputURL(w http.ResponseWriter, r *http.Request) {
+	if !requirePOST(w, r) {
+		return
+	}
+
+	configValue, success := getValueFromRequest(w, r)
+	if !success {
+		return
+	}
+
+	if err := data.SetDirectHLSInputURL(configValue.Value.(string)); err != nil {
+		controllers.WriteSimpleResponse(w, false, err.Error())
+		return
+	}
+
+	controllers.WriteSimpleResponse(w, true, "direct hls input url set")
+}
+
 // SetServerURL will handle the web config request to set the full server URL.
 func SetServerURL(w http.ResponseWriter, r *http.Request) {
 	if !requirePOST(w, r) {
