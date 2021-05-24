@@ -129,9 +129,8 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 		}
 		defer sambaShare.Umount()
 
-		if _sambaFolderPath == "" {
-			_sambaFolderPath = "/"
-		}
+		// this samba client doesnt like leading slashes in paths.
+		_sambaFolderPath = strings.TrimPrefix(_sambaFolderPath, "/")
 
 		fileInfos, err := sambaShare.ReadDir(_sambaFolderPath)
 		if err != nil {
