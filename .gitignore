@@ -26,6 +26,7 @@ webroot/thumbnail.jpg
 webroot/preview.gif
 webroot/hls
 webroot/static/content.md
+webroot.json
 hls/
 dist/
 data/
