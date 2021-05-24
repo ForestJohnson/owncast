@@ -142,17 +142,6 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 
 		log.Printf("mounted the folder '%s' on the samba share '%s' on server '%s' for direct HLS input", _sambaFolderPath, _sambaShareName, _sambaHostPort)
 
-		getMostRecentModTime := func(fileInfos []os.FileInfo) time.Time {
-			var mostRecentTime time.Time
-			for _, fileInfo := range fileInfos {
-				modTime := fileInfo.ModTime()
-				if modTime.After(mostRecentTime) {
-					mostRecentTime = modTime
-				}
-			}
-			return mostRecentTime
-		}
-
 		mostRecentModTime := getMostRecentModTime(fileInfos)
 		hlsSegmentServiceClient := http.Client{
 			Timeout: time.Second * 5,
@@ -176,22 +165,15 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 
 				// TODO how much of this can be pulled from the HLS video stream ?
 				// TODO how much of this is necessary for the system to work?
-				// broadcaster := models.Broadcaster{
-				// 	RemoteAddr: _sambaHostPort,
-				// 	Time:       time.Now(),
-				// 	StreamDetails: models.InboundStreamDetails{
-				// 		Width:          data.Width,
-				// 		Height:         data.Height,
-				// 		VideoBitrate:   int(data.VideoBitrate),
-				// 		VideoCodec:     getVideoCodec(data.VideoCodec),
-				// 		VideoFramerate: data.VideoFramerate,
-				// 		AudioBitrate:   int(data.AudioBitrate),
-				// 		AudioCodec:     getAudioCodec(data.AudioCodec),
-				// 		Encoder:        data.Encoder,
-				// 		VideoOnly:      data.AudioCodec == nil,
-				// 	},
-				// }
-				// _setBroadcaster(broadcaster)
+				_setBroadcaster(models.Broadcaster{
+					RemoteAddr:    _sambaHostPort,
+					Time:          time.Now(),
+					StreamDetails: models.InboundStreamDetails{},
+				})
+
+				log.Printf("now streaming files from '%s' on the samba share '%s' on server '%s' for direct HLS!!", _sambaFolderPath, _sambaShareName, _sambaHostPort)
+
+				// TODO call SetStreamAsDisconnected() when the files stop getting updated for a couple seconds.
 
 				for {
 					fileInfos, err := sambaShare.ReadDir(_sambaFolderPath)
@@ -221,9 +203,10 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 
 								defer file.Close()
 
+								// TODO I have hardcoded stream ID 0 here...
 								hlsUploadRequest, err := http.NewRequest(
 									"PUT",
-									fmt.Sprintf("http://127.0.0.1:%d/%s", config.InternalHLSListenerPort, fileInfo.Name()),
+									fmt.Sprintf("http://127.0.0.1:%s/0/%s", config.InternalHLSListenerPort, fileInfo.Name()),
 									file,
 								)
 								if err != nil {
@@ -273,4 +256,15 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 		)
 		return
 	}
+}
+
+func getMostRecentModTime(fileInfos []os.FileInfo) time.Time {
+	var mostRecentTime time.Time
+	for _, fileInfo := range fileInfos {
+		modTime := fileInfo.ModTime()
+		if modTime.After(mostRecentTime) {
+			mostRecentTime = modTime
+		}
+	}
+	return mostRecentTime
 }
