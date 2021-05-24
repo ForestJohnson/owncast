@@ -59,15 +59,17 @@ func setStreamAsConnected() {
 		segmentPath = config.PrivateHLSStoragePath
 	}
 
-	go func() {
-		_transcoder = transcoder.NewTranscoder()
-		_transcoder.TranscoderCompleted = func(error) {
-			SetStreamAsDisconnected()
-			_transcoder = nil
-			_currentBroadcast = nil
-		}
-		_transcoder.Start()
-	}()
+	if data.GetDirectHLSInputURL() == "" {
+		go func() {
+			_transcoder = transcoder.NewTranscoder()
+			_transcoder.TranscoderCompleted = func(error) {
+				SetStreamAsDisconnected()
+				_transcoder = nil
+				_currentBroadcast = nil
+			}
+			_transcoder.Start()
+		}()
+	}
 
 	go webhooks.SendStreamStatusEvent(models.StreamStarted)
 	transcoder.StartThumbnailGenerator(segmentPath, data.FindHighestVideoQualityIndex(_currentBroadcast.OutputSettings))
