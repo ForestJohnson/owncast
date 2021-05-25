@@ -1,0 +1,207 @@
+
+:root {
+  --header-height: 3.6em;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('Nunito-Bold.woff2') format('woff2'), url('Nunito-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+#top-content header {
+  background-color: #9359fa;
+  height: 3.2em;
+}
+
+#top-content header.border-gray-900 {
+  border-bottom: 1px solid #452775;
+}
+
+#top-content header.border-gray-900:after {
+  content: " asd";
+  display: block;
+  position: fixed;
+  background: #f6ff72;
+  border-bottom: 1px solid #555;
+  border-top: 1px solid #727630;
+  height: 0.4em;
+  top: 3.2em;
+  color: rgba(0,0,0,0);
+  width: 100%;
+}
+
+
+#top-content header h1 {
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+  font-weight: bolder;
+  font-size: 1.5rem;
+}
+
+#top-content header h1.uppercase {
+  text-transform: none;
+}
+
+#top-content header h1 .instance-title {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: bolder;
+}
+
+#top-content header h1 #logo-container {
+  border-radius: 4px;
+  border-left: 0.35rem solid #ccc;
+  border-right: 0.35rem solid #ccc;
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+}
+
+#username-display.text-indigo-600 {
+  color: rgba(255,255,255,0.7);
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+
+#button-update-username.bg-blue-500 {
+  background-color: #dae266;
+  color: #555;
+  border: 2px solid #727630;
+}
+
+#button-update-username.bg-blue-500:hover {
+  background-color: #f6ff72;
+  color: #555;
+  border: 2px solid #727630;
+}
+
+#username-change-input.text-xs {
+  font-size: 0.8rem;
+  max-width: 8rem;
+  color: #888;
+  padding: 0.3rem;
+}
+
+#button-cancel-change.text-white {
+  color: #aaa;
+  font-weight: bolder;
+  padding-top: 0.3rem;
+}
+
+
+#chat-toggle.bg-gray-800 {
+  background-color: #452775;
+}
+
+#chat-toggle.bg-gray-800.no-chat {
+  opacity: 1;
+}
+
+#chat-toggle.bg-gray-800:hover {
+  background-color: #6a3fb4;
+}
+
+#chat-toggle.bg-gray-800:focus {
+  outline: 0;
+}
+
+#oc-custom-poster {
+  background: #71743e;
+}
+
+#oc-custom-poster .custom-thumbnail-image{
+  background-color: black;
+  opacity: 0.6 !important;
+}
+
+#stream-info.bg-gray-900 {
+  background-color: #2e2f1c;
+
+}
+#stream-info.font-mono {
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+  font-weight: bolder;
+}
+
+#stream-info.font-mono span {
+  font-size: 0.90rem;
+}
+
+.user-content .user-image {
+  background-image: url("/img/avatar.jpg") !important; /*override somethign set on element.style*/
+}
+
+.user-content-header h2 span.text-indigo-600  {
+  color: #9359fa;
+
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+}
+
+#tag-list li.tag.bg-gray-700 {
+  background-color: #727630;
+  color:#dae266;
+  font-weight: bolder;
+}
+
+#user-content #extra-user-content a {
+  color: #9359fa;
+}
+
+.powered-by-owncast-logo {
+  min-width: 6em;
+  width: 6em;
+  height: 6em;
+  max-height: 6em;
+  background-size: 90%;
+  background-image: url("/img/owncast-logo.svg");
+}
+
+.powered-by-owncast-header {
+  color: #9359fa;
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+}
+
+#chat-container.bg-gray-800 {
+  background-color: #2e2f1c;
+}
+
+/* different users messages will be different colors by default, random color per user */
+/*
+#messages-container .message{
+  background-color: #555 !important; 
+}
+*/
+
+#messages-container .message .message-author {
+  font-family: Nunito,-apple-system,system-ui,BlinkMacSystemFont,Ubuntu,Roboto,"Segoe UI",sans-serif;
+  font-size: 1rem;
+}
+#messages-container .message .message-text {
+  padding-top: 0.2rem;
+  font-size: 1rem;
+}
+
+/* This should only be used once we modify the chat bubble color generator to make dark colors */
+/*
+#messages-container .message-name-change .text-white {
+  color: #444;
+}
+*/
+
+#messages-container .message.message.border-indigo-700 {
+  border: none;
+  background-color: #9359fa !important; /* important is needed cuz the JS sets this on the element.style */
+}
+#messages-container .message.border-indigo-700 .message-author {
+  color: white;
+}
+
+
+
+
+#message-input-container.bg-gray-900 {
+  background: linear-gradient(#3f4035, #222315);
+  border-top: 1px solid #2e2f1c
+}
