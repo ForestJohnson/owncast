@@ -1,12 +1,17 @@
 package directhls
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/binary"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -22,6 +27,8 @@ import (
 var _sambaHostPort string
 var _sambaFolderPath string
 var _sambaShareName string
+var _streamSegmentRegex *regexp.Regexp
+var _streamStartedTime string
 
 var _setStreamAsConnected func()
 var _setBroadcaster func(models.Broadcaster)
@@ -30,6 +37,7 @@ var _setBroadcaster func(models.Broadcaster)
 func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster)) {
 	_setStreamAsConnected = setStreamAsConnected
 	_setBroadcaster = setBroadcaster
+	_streamSegmentRegex = regexp.MustCompile(`(stream)[_-]?([^#\s]+)\.ts`)
 
 	directHLSInputURLString := data.GetDirectHLSInputURL()
 
@@ -171,6 +179,17 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 					StreamDetails: models.InboundStreamDetails{},
 				})
 
+				streamStartedTimeBuffer := make([]byte, 8)
+				binary.BigEndian.PutUint64(streamStartedTimeBuffer, uint64(time.Now().Unix()))
+				truncatedStreamStartedTimeBuffer := []byte{}
+				for _, bite := range streamStartedTimeBuffer {
+					//log.Println(bite)
+					if bite != byte(255) && bite != byte(0) {
+						truncatedStreamStartedTimeBuffer = append(truncatedStreamStartedTimeBuffer, bite)
+					}
+				}
+				_streamStartedTime = base64.RawURLEncoding.EncodeToString(truncatedStreamStartedTimeBuffer)
+
 				log.Printf("now streaming files from '%s' on the samba share '%s' on server '%s' for direct HLS!!", _sambaFolderPath, _sambaShareName, _sambaHostPort)
 
 				// TODO call SetStreamAsDisconnected() when the files stop getting updated for a couple seconds.
@@ -200,14 +219,32 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 									)
 									return
 								}
-
 								defer file.Close()
 
+								var dataToSend io.Reader
+								if strings.HasSuffix(fileInfo.Name(), ".m3u8") {
+									playlistBytes, err := io.ReadAll(file)
+									if err != nil {
+										log.Errorf(
+											"samba client unable to read file '%s/%s' on share '%s' on server '%s' for direct HLS input: %s. Stream wont work if this error keeps happening",
+											_sambaFolderPath, fileInfo.Name(), _sambaShareName, _sambaHostPort, err,
+										)
+										return
+									}
+
+									dataToSend = bytes.NewBuffer(
+										_streamSegmentRegex.ReplaceAll(playlistBytes, []byte(fmt.Sprintf("$1-%s-$2.ts", _streamStartedTime))),
+									)
+								} else {
+									dataToSend = file
+								}
+
+								fileName := _streamSegmentRegex.ReplaceAllString(fileInfo.Name(), fmt.Sprintf("$1-%s-$2.ts", _streamStartedTime))
 								// TODO I have hardcoded stream ID 0 here...
 								hlsUploadRequest, err := http.NewRequest(
 									"PUT",
-									fmt.Sprintf("http://127.0.0.1:%s/0/%s", config.InternalHLSListenerPort, fileInfo.Name()),
-									file,
+									fmt.Sprintf("http://127.0.0.1:%s/0/%s", config.InternalHLSListenerPort, fileName),
+									dataToSend,
 								)
 								if err != nil {
 									log.Errorf(
