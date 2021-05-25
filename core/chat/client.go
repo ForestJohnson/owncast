@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -48,10 +50,17 @@ func NewClient(ws *websocket.Conn) *Client {
 		log.Panicln("ws cannot be nil")
 	}
 
+	var initialUsername string
 	var ignoreClient = false
 	for _, extraData := range ws.Config().Protocol {
 		if extraData == "IGNORE_CLIENT" {
 			ignoreClient = true
+		}
+		if strings.HasPrefix(extraData, "INITIAL_USERNAME_") {
+			unescaped, err := url.QueryUnescape(strings.TrimPrefix(extraData, "INITIAL_USERNAME_"))
+			if err == nil {
+				initialUsername = unescaped
+			}
 		}
 	}
 
@@ -68,7 +77,7 @@ func NewClient(ws *websocket.Conn) *Client {
 
 	rateLimiter := rate.NewLimiter(0.6, 5)
 
-	return &Client{time.Now(), 0, userAgent, ipAddress, nil, clientID, nil, ignoreClient, socketID, ws, ch, pingch, usernameChangeChannel, userJoinedChannel, doneCh, rateLimiter}
+	return &Client{time.Now(), 0, userAgent, ipAddress, &initialUsername, clientID, nil, ignoreClient, socketID, ws, ch, pingch, usernameChangeChannel, userJoinedChannel, doneCh, rateLimiter}
 }
 
 func (c *Client) write(msg models.ChatEvent) {

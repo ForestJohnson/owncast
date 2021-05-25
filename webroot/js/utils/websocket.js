@@ -25,7 +25,7 @@ export const CALLBACKS = {
 const TIMER_WEBSOCKET_RECONNECT = 5000; // ms
 
 export default class Websocket {
-  constructor(ignoreClient) {
+  constructor(ignoreClient, initialUsername) {
     this.websocket = null;
     this.websocketReconnectTimer = null;
 
@@ -38,12 +38,20 @@ export default class Websocket {
     this.scheduleReconnect = this.scheduleReconnect.bind(this);
 
     this.ignoreClient = ignoreClient;
+    this.initialUsername = initialUsername;
 
     this.createAndConnect();
   }
 
   createAndConnect() {
-    const extraFlags = this.ignoreClient ? [IGNORE_CLIENT_FLAG] : [];
+    const extraFlags = [];
+    if(this.ignoreClient) {
+      extraFlags.push(IGNORE_CLIENT_FLAG);
+    }
+    if(this.initialUsername) {
+      extraFlags.push(`INITIAL_USERNAME_${encodeURIComponent(this.initialUsername)}`);
+    }
+
     const ws = new WebSocket(URL_WEBSOCKET, extraFlags);
     ws.onopen = this.onOpen.bind(this);
     ws.onclose = this.onClose.bind(this);
