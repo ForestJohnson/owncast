@@ -54,12 +54,13 @@ export default class App extends Component {
     this.hasTouchScreen = hasTouchScreen();
     this.windowBlurred = false;
 
+    const initialUsername = getLocalStorage(KEY_USERNAME) || generateUsername();
     this.state = {
-      websocket: new Websocket(),
+      websocket: new Websocket(false, initialUsername),
       displayChat: chatStorage === null ? true : chatStorage,
       chatInputEnabled: false, // chat input box state
       chatDisabled: false,
-      username: getLocalStorage(KEY_USERNAME) || generateUsername(),
+      username: initialUsername,
       touchKeyboardActive: false,
 
       configData: {},

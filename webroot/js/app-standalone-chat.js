@@ -11,10 +11,11 @@ export default class StandaloneChat extends Component {
   constructor(props, context) {
     super(props, context);
 
+    const initialUsername = getLocalStorage(KEY_USERNAME) || generateUsername();
     this.state = {
-      websocket: new Websocket(true), // Send along the "ignoreClient" flag so this isn't counted as a viewer
+      websocket: new Websocket(true, initialUsername), // Send along the "ignoreClient" flag so this isn't counted as a viewer
       chatEnabled: true, // always true for standalone chat
-      username: getLocalStorage(KEY_USERNAME) || generateUsername(),
+      username: initialUsername,
     };
 
     this.websocket = null;
