@@ -38,6 +38,7 @@ export default class Websocket {
     this.scheduleReconnect = this.scheduleReconnect.bind(this);
 
     this.ignoreClient = ignoreClient;
+    this.initialUsername = initialUsername;
 
     this.createAndConnect();
   }
@@ -48,8 +49,9 @@ export default class Websocket {
       extraFlags.push(IGNORE_CLIENT_FLAG);
     }
     if(this.initialUsername) {
-      extraFlags.push(`INITIAL_USERNAME_${initialUsername}`);
+      extraFlags.push(`INITIAL_USERNAME_${encodeURIComponent(this.initialUsername)}`);
     }
+
     const ws = new WebSocket(URL_WEBSOCKET, extraFlags);
     ws.onopen = this.onOpen.bind(this);
     ws.onclose = this.onClose.bind(this);

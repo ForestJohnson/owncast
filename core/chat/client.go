@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 	"time"
 
@@ -55,8 +56,11 @@ func NewClient(ws *websocket.Conn) *Client {
 		if extraData == "IGNORE_CLIENT" {
 			ignoreClient = true
 		}
-		if strings.HasPrefix(extraData, "INITIAL_USERNAME") {
-			initialUsername = strings.TrimPrefix(extraData, "INITIAL_USERNAME")
+		if strings.HasPrefix(extraData, "INITIAL_USERNAME_") {
+			unescaped, err := url.QueryUnescape(strings.TrimPrefix(extraData, "INITIAL_USERNAME_"))
+			if err == nil {
+				initialUsername = unescaped
+			}
 		}
 	}
 
