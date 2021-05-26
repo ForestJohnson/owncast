@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.38.44
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/grafov/m3u8 v0.11.1
-	github.com/hirochachacha/go-smb2 v1.0.10 // indirect
+	github.com/hirochachacha/go-smb2 v1.0.10
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.4 // indirect

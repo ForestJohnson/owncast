@@ -16,7 +16,7 @@ shutdown () {
 trap shutdown INT TERM ABRT EXIT
 
 echo "Cloning owncast admin into $INSTALL_TEMP_DIRECTORY..."
-git clone https://github.com/owncast/owncast-admin 2> /dev/null
+git clone https://git.sequentialread.com/forest/owncast-admin 2> /dev/null
 cd owncast-admin
 
 echo "Installing npm modules for the owncast admin..."
