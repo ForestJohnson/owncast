@@ -12,6 +12,7 @@ RUN apk add --no-cache ffmpeg ffmpeg-libs
 WORKDIR /app
 COPY webroot /app/webroot
 COPY static /app/static
+COPY nsswitch.conf /etc/nsswitch.conf
 COPY --from=build /build/owncast /app/owncast
 
 EXPOSE 8080 1935
