@@ -83,6 +83,7 @@ func Start() error {
 func createInitialOfflineState() error {
 	// Provide default files
 	if !utils.DoesFileExists(filepath.Join(config.WebRoot, "thumbnail.jpg")) {
+		// TODO use the offline stream image here somehow?
 		if err := utils.Copy("static/logo.png", filepath.Join(config.WebRoot, "thumbnail.jpg")); err != nil {
 			return err
 		}
@@ -107,8 +108,8 @@ func transitionToOfflineVideoStreamContent() {
 	_transcoder.Start()
 
 	// Copy the logo to be the thumbnail
-	logo := data.GetLogoPath()
-	err := utils.Copy(filepath.Join("data", logo), "webroot/thumbnail.jpg")
+	offlineStreamImage := data.GetOfflineStreamImagePath()
+	err := utils.Copy(filepath.Join("data", offlineStreamImage), "webroot/thumbnail.jpg")
 	if err != nil {
 		log.Warnln(err)
 	}
@@ -134,9 +135,9 @@ func resetDirectories() {
 	}
 
 	// Remove the previous thumbnail
-	logo := data.GetLogoPath()
-	if utils.DoesFileExists(logo) {
-		err = utils.Copy(path.Join("data", logo), filepath.Join(config.WebRoot, "thumbnail.jpg"))
+	offlineStreamImage := data.GetOfflineStreamImagePath()
+	if utils.DoesFileExists(offlineStreamImage) {
+		err = utils.Copy(path.Join("data", offlineStreamImage), filepath.Join(config.WebRoot, "thumbnail.jpg"))
 		if err != nil {
 			log.Warnln(err)
 		}

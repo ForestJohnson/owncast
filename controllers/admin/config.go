@@ -182,6 +182,15 @@ func SetStreamKey(w http.ResponseWriter, r *http.Request) {
 
 // SetLogo will handle a new logo image file being uploaded.
 func SetLogo(w http.ResponseWriter, r *http.Request) {
+	handleSetImage(w, r, "logo", data.SetLogoPath)
+}
+
+// SetLogo will handle a new logo image file being uploaded.
+func SetOfflineStreamImage(w http.ResponseWriter, r *http.Request) {
+	handleSetImage(w, r, "offlineStreamImage", data.SetOfflineStreamImagePath)
+}
+
+func handleSetImage(w http.ResponseWriter, r *http.Request, name string, imagePathSetter func(string) error) {
 	if !requirePOST(w, r) {
 		return
 	}
@@ -224,13 +233,13 @@ func SetLogo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imgPath := filepath.Join("data", "logo"+extension)
+	imgPath := filepath.Join("data", name+extension)
 	if err := ioutil.WriteFile(imgPath, bytes, 0644); err != nil {
 		controllers.WriteSimpleResponse(w, false, err.Error())
 		return
 	}
 
-	if err := data.SetLogoPath("logo" + extension); err != nil {
+	if err := imagePathSetter(name + extension); err != nil {
 		controllers.WriteSimpleResponse(w, false, err.Error())
 		return
 	}
