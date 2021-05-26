@@ -68,7 +68,7 @@ func Start() error {
 	chat.Setup(ChatListenerImpl{})
 
 	if data.GetDirectHLSInputURL() != "" {
-		go directhls.Start(setStreamAsConnected, setBroadcaster)
+		go directhls.Start(setStreamAsConnected, setBroadcaster, SetStreamAsDisconnected)
 
 		log.Infof("Polling for HLS segments at %s.", data.GetDirectHLSInputURL())
 	} else {

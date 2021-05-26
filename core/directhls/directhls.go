@@ -31,11 +31,13 @@ var _streamSegmentRegex *regexp.Regexp
 var _streamStartedTime string
 
 var _setStreamAsConnected func()
+var _setStreamAsDisconnected func()
 var _setBroadcaster func(models.Broadcaster)
 
 // Start starts the directhls service, polling for HLS segments at the DirectHLSInputURL.
-func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster)) {
+func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster), setStreamAsDisconnected func()) {
 	_setStreamAsConnected = setStreamAsConnected
+	_setStreamAsDisconnected = setStreamAsDisconnected
 	_setBroadcaster = setBroadcaster
 	_streamSegmentRegex = regexp.MustCompile(`(stream)[_-]?([^#\s]+)\.ts`)
 
@@ -156,7 +158,7 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 		}
 
 		for {
-			time.Sleep(time.Second * 5)
+			time.Sleep(time.Second * 2)
 
 			fileInfos, err := sambaShare.ReadDir(_sambaFolderPath)
 			if err != nil {
@@ -194,6 +196,12 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 				// TODO call SetStreamAsDisconnected() when the files stop getting updated for a couple seconds.
 
 				for {
+					// if it has been 10 seconds without any updates to files in the share, we should consider the stream disconnected.
+					if time.Now().After(mostRecentModTime.Add(time.Second * 15)) {
+						_setStreamAsDisconnected()
+						break
+					}
+
 					fileInfos, err := sambaShare.ReadDir(_sambaFolderPath)
 					if err != nil {
 						log.Errorf(
@@ -283,6 +291,8 @@ func Start(setStreamAsConnected func(), setBroadcaster func(models.Broadcaster))
 					}
 				}
 			}
+
+			time.Sleep(time.Second * 4)
 		}
 
 	} else {
