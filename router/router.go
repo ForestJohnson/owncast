@@ -75,6 +75,9 @@ func Start() error {
 	// Disconnect inbound stream
 	http.HandleFunc("/api/admin/disconnect", middleware.RequireAdminAuth(admin.DisconnectInboundConnection))
 
+	// End the owncast process.
+	http.HandleFunc("/api/admin/selfdestruct", middleware.RequireAdminAuth(admin.SelfDestruct))
+
 	// Server config
 	http.HandleFunc("/api/admin/serverconfig", middleware.RequireAdminAuth(admin.GetServerConfig))
 
