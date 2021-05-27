@@ -56,7 +56,9 @@ func (yp *YP) Start() {
 
 // Stop stops the pinging of YP.
 func (yp *YP) Stop() {
-	yp.timer.Stop()
+	if yp.timer != nil {
+		yp.timer.Stop()
+	}
 }
 
 func (yp *YP) ping() {
